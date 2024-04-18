@@ -1,5 +1,7 @@
+import { Transform, TransformFnParams } from "class-transformer";
 import { IsNotEmpty} from "class-validator";
-import { Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Tema } from "src/tema/entities/tema.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({ name: "tb_postagens" })
 export class Postagem{
@@ -8,10 +10,12 @@ export class Postagem{
     @PrimaryGeneratedColumn() // Chave Primária e Auto_Increment
     id: number;
     
+    @Transform(({value}: TransformFnParams) => value?.trim())
     @IsNotEmpty()
     @Column({length: 100, nullable: false})
     titulo: string;
 
+    @Transform(({value}: TransformFnParams) => value?.trim())
     @IsNotEmpty()
     @Column({length: 1000, nullable: false})
     texto: string;
@@ -19,5 +23,10 @@ export class Postagem{
 
     @UpdateDateColumn()
     data: Date;
+
+    @ManyToOne(() => Tema, (tema) => tema.postagem, {
+        onDelete: "CASCADE"
+    })
+    tema: Tema;
 
 }
